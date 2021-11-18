@@ -1,3 +1,5 @@
+# A silly change
+
 # Git Credential Manager Core
 
 [![Build Status](https://github.com/microsoft/Git-Credential-Manager-Core/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/microsoft/Git-Credential-Manager-Core/actions/workflows/continuous-integration.yml)
