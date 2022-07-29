@@ -440,40 +440,63 @@ jobs:
 # ================================
   validate:
     name: Validate installers
-    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        component:
+          - os: ubuntu-latest
+            artifact: linux-sign
+          - os: macos-latest
+            artifact: osx-x64-sign
+          - os: windows-latest
+            artifact: win-sign
+    runs-on: ${{ matrix.component.os }}
     needs: [ osx-sign, win-sign, linux-sign ]
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Indicate full history so Nerdbank.GitVersioning works.
+
+      - uses: dotnet/nbgv@master
+        with:
+          setCommonVars: true
+
       - name: Download artifacts
         uses: actions/download-artifact@v3
+        with:
+          name: ${{ matrix.component.artifact }}
 
-      - name: Build & Install Windows
-        if: contains(matrix.os, 'windows')
-        shell: sh
+      - name: Install Windows
+        if: contains(matrix.component.os, 'windows')
+        shell: bash
         run: |
-          exePaths=$(find ./win-sign/signed/*.exe) &&
+          exePaths=$(find ./signed/*.exe) &&
           for path in $exePaths; do
-            start "" "$path" /WAIT //SILENT //NORESTART &&
-            git-credential-manager-core --version
+            start "" "$path" /WAIT //VERYSILENT //NORESTART
+            # Because GCM is installed with Git for Windows and we have multiple
+            # exes, we validate the version here using the full path.
+            "/c/Program Files (x86)/Git Credential Manager/git-credential-manager-core.exe" --version| sed 's/+.*//' >actual
+            echo $GitBuildVersionSimple >expect
+            cmp expect actual || exit 1
           done
 
-      - name: Build & Install Linux
-        if: contains(matrix.os, 'ubuntu')
+      - name: Install Linux
+        if: contains(matrix.component.os, 'ubuntu')
         run: |
-          debpath=$(find ./linux-sign/*.deb)
+          debpath=$(find ./*.deb)
           sudo apt install $debpath
           git-credential-manager-core configure
-          git-credential-manager-core --version
 
-      - name: Build & Install macOS
-        if: contains(matrix.os, 'macos')
+      - name: Install macOS
+        if: contains(matrix.component.os, 'macos')
         run: |
-          directories=('osx-arm64-sign' 'osx-x64-sign')
-
-          for directory in $directories; do
-              pkgpath=$(find $directory/*.pkg)
-              installer -pkg $pkgpath -target /
-              git-credential-manager-core --version
-          done
+          # Only validate x64, given arm64 agents are not available
+          pkgpath=$(find ./*.pkg)
+          sudo installer -pkg $pkgpath -target /
+      
+      - name: Validate
+        shell: bash
+        if: contains(matrix.component.os, 'macos') || contains(matrix.component.os, 'ubuntu')
+        run: |
+          git-credential-manager-core --version | sed 's/+.*//' >actual
+          echo $GitBuildVersionSimple >expect
+          cmp expect actual || exit 1
