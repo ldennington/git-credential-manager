@@ -1,0 +1,13 @@
+name: test
+on:
+  release:
+    types: [published]
+
+jobs:
+  version:
+    name: Validate version
+    runs-on: ubuntu-latest 
+    steps:
+      - name: test
+        run: |
+          echo ${GITHUB_REF#refs/tags/v}
