@@ -467,16 +467,11 @@ jobs:
 
       - name: Install Windows
         if: contains(matrix.component.os, 'windows')
-        shell: bash
+        shell: pwsh
         run: |
-          exePaths=$(find ./signed/*.exe) &&
+          exePaths=$(find ./win-sign/signed/*.exe) &&
           for path in $exePaths; do
-            start "" "$path" /WAIT //VERYSILENT //NORESTART
-            # Because GCM is installed with Git for Windows and we have multiple
-            # exes, we validate the version here using the full path.
-            "/c/Program Files (x86)/Git Credential Manager/git-credential-manager-core.exe" --version| sed 's/+.*//' >actual
-            echo $GitBuildVersionSimple >expect
-            cmp expect actual || exit 1
+            start "" "$path" /WAIT //VERYSILENT //NORESTART &&
           done
 
       - name: Install Linux
@@ -495,7 +490,6 @@ jobs:
       
       - name: Validate
         shell: bash
-        if: contains(matrix.component.os, 'macos') || contains(matrix.component.os, 'ubuntu')
         run: |
           git-credential-manager-core --version | sed 's/+.*//' >actual
           echo $GitBuildVersionSimple >expect

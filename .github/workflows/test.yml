@@ -1,0 +1,54 @@
+name: test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ validate-installers-test ]
+
+jobs:
+# ================================
+#              macOS
+# ================================
+  windows-playground:
+    name: Build macOS
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        component:
+          - os: windows-latest
+            artifact: win-sign
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0 # Indicate full history so Nerdbank.GitVersioning works.
+
+    - uses: dotnet/nbgv@master
+      with:
+        setCommonVars: true
+
+    - name: Install Windows
+      shell: pwsh
+      run: |
+        curl -L https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.779/gcm-win-x86-2.0.779.exe --output gcm-win-x86-2.0.779.exe
+        Start-Process -FilePath "gcm-win-x86-2.0.779.exe" -ArgumentList "/VERYSILENT"
+
+    - name: Validate
+      shell: bash
+      run: |
+        # Even when a standalone GCM version is installed and added to the PATH,
+        # GitHub actions runners still only recognize the version bundled with
+        # Git for Windows. For this reason, we use the full path to our
+        # installation to validate the version.
+        if [[ windows-latest == windows* ]]; then
+          # Convert ProgramFiles(x86) environment variable to Unix conventions
+          cmd="$PROGRAMFILES (x86)\Git Credential Manager\git-credential-manager-core.exe"
+        else
+          cmd=git-credential-manager-core
+        fi
+        "$cmd" --version | sed 's/+.*//' >actual
+        echo 2.0.779 >expect
+        cmp expect actual || exit 1
+  
+    - name: action-tmate
+      if: failure()
+      uses: mxschmitt/action-tmate@v3
