@@ -30,7 +30,7 @@ jobs:
       shell: pwsh
       run: |
         curl -L https://github.com/GitCredentialManager/git-credential-manager/releases/download/v2.0.779/gcm-win-x86-2.0.779.exe --output gcm-win-x86-2.0.779.exe
-        Start-Process -FilePath "gcm-win-x86-2.0.779.exe" -ArgumentList "/VERYSILENT"
+        Start-Process -Wait -FilePath "gcm-win-x86-2.0.779.exe" -ArgumentList "/VERYSILENT"
 
     - name: Validate
       shell: bash
