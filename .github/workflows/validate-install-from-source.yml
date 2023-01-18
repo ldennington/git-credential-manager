@@ -41,3 +41,5 @@ jobs:
       - run: |
           sh "${GITHUB_WORKSPACE}/src/linux/Packaging.Linux/install-from-source.sh" -y
           git-credential-manager --help || exit 1
+          
+          
