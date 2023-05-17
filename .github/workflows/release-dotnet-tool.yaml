@@ -1,0 +1,20 @@
+name: release-dotnet-tool
+on:
+  release:
+    types: [released]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    environment: release
+    steps:
+    - name: Download artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: "*.nupkg"
+        name_is_regexp: true
+
+    - name: Publish .NET tool to nuget.org
+      run: |
+        dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_API_KEY }} \
+          --source https://apiint.nugettest.org/v3/index.json
