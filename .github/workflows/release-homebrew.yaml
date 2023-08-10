@@ -2,7 +2,6 @@ name: "release-homebrew"
 on:
   release:
     types: [released]
-  workflow_dispatch:
 
 jobs:
   release:
@@ -10,7 +9,7 @@ jobs:
     environment: release
     steps:
     - name: Update Homebrew tap
-      uses: mjcheetham/update-homebrew@v1.3
+      uses: mjcheetham/update-homebrew@v1.4
       with:
         token: ${{ secrets.HOMEBREW_TOKEN }}
         tap: ldennington/homebrew-cask
