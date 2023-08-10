@@ -2,6 +2,7 @@ name: "release-homebrew"
 on:
   release:
     types: [released]
+  workflow_dispatch:
 
 jobs:
   release:
@@ -12,8 +13,8 @@ jobs:
       uses: mjcheetham/update-homebrew@v1.3
       with:
         token: ${{ secrets.HOMEBREW_TOKEN }}
-        tap: microsoft/git
-        name: git-credential-manager-core
+        tap: ldennington/homebrew-cask
+        name: git-credential-manager
         type: cask
         releaseAsset: |
           gcm-osx-x64-(.*)\.pkg
