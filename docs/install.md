@@ -72,7 +72,7 @@ installation method.
 
 #### Install
 
-Download the latest [.deb package][latest-release], and run the following:
+Download the latest [.deb package][latest-release]*, and run the following:
 
 ```shell
 sudo dpkg -i <path-to-package>
@@ -85,6 +85,9 @@ git-credential-manager configure
 git-credential-manager unconfigure
 sudo dpkg -r gcm
 ```
+
+*If you'd like to validate the package's signature after downloading, check out
+the instructions [here][linux-validate-gpg].
 
 ---
 
@@ -238,4 +241,5 @@ dotnet tool uninstall -g git-credential-manager
 [git-for-windows-screenshot]: https://user-images.githubusercontent.com/5658207/140082529-1ac133c1-0922-4a24-af03-067e27b3988b.png
 [latest-release]: https://github.com/git-ecosystem/git-credential-manager/releases/latest
 [linux-uninstall]: linux-fromsrc-uninstall.md
+[linux-validate-gpg]: ./linux-validate-gpg.md
 [ms-wsl]: https://aka.ms/wsl#
