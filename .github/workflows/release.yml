@@ -731,7 +731,7 @@ jobs:
           zip -jr win-x86-payload-and-symbols/gcm-win-x86-$VERSION.zip win-sign/signed-payload
           zip -jr win-x86-payload-and-symbols/gcm-win-x86-$VERSION-symbols.zip win-sign/src/windows/Installer.Windows/symbols
 
-      - uses: actions/github-script@v6
+      - uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
