@@ -186,16 +186,16 @@ case "$distribution" in
         ensure_dotnet_installed
     ;;
     alpine)
-        # Check that the version is at least 3.15
+        libssl_version=libssl3
+
         if [[ $(echo "$version 3.15" | awk '{print ($1 < $2)}') -ne 0 ]]; then
-            echo "You are running Alpine $version. This script requires at least Alpine 3.15."
-            exit 1
+            libssl_version=libssl1.1
         fi
 
         $sudo_cmd apk update
 
         # Install dotnet/GCM dependencies.
-        install_packages apk add "curl git icu-libs krb5-libs libgcc libintl libssl3 libstdc++ zlib which bash coreutils gcompat"
+        install_packages apk add "curl git icu-libs krb5-libs libgcc libintl $libssl_version libstdc++ zlib which bash coreutils gcompat"
 
         ensure_dotnet_installed
     ;;
