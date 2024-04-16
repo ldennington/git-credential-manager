@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - main
+      - test
 
 jobs:
   docker:
@@ -23,7 +23,7 @@ jobs:
           - image: tgagor/centos
           - image: tgagor/centos-stream
           - image: redhat/ubi8
-          - image: alpine
+          - image: alpine:3.14
           - image: opensuse/leap
           - image: opensuse/tumbleweed
           - image: registry.suse.com/suse/sle15:15.4.27.11.31
