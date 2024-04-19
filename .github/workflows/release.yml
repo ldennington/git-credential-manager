@@ -2,6 +2,9 @@ name: release
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - last-nuget-cert-test
 
 permissions:
   id-token: write
