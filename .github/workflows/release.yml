@@ -453,32 +453,32 @@ jobs:
           --account-name $env:AST --container-name $env:ASC --name $env:SCT
         Expand-Archive -Path sign-cli.zip -DestinationPath .\sign-cli
 
-      - name: Sign package
-        env:
-          ACST: ${{ secrets.AZURE_TENANT_ID }}
-          ACSI: ${{ secrets.AZURE_CLIENT_ID }}
-          ACSS: ${{ secrets.AZURE_CLIENT_SECRET }}
-        run: |
-          ./sign-cli/sign.exe code azcodesign nupkg/* `
-            -acsu https://wus2.codesigning.azure.net/ `
-            -acsa git-fundamentals-signing `
-            -acscp git-fundamentals-windows-signing `
-            -d "Git Fundamentals Windows Signing Certificate" `
-            -u "https://github.com/git-ecosystem/git-credential-manager" `
-            -acst $env:ACST `
-            -acsi $env:ACSI `
-            -acss $env:ACSS `
-            -acsc nuget-signing-certificate.cer
+    - name: Sign package
+      env:
+        ACST: ${{ secrets.AZURE_TENANT_ID }}
+        ACSI: ${{ secrets.AZURE_CLIENT_ID }}
+        ACSS: ${{ secrets.AZURE_CLIENT_SECRET }}
+      run: |
+        ./sign-cli/sign.exe code azcodesign nupkg/* `
+          -acsu https://wus2.codesigning.azure.net/ `
+          -acsa git-fundamentals-signing `
+          -acscp git-fundamentals-windows-signing `
+          -d "Git Fundamentals Windows Signing Certificate" `
+          -u "https://github.com/git-ecosystem/git-credential-manager" `
+          -acst $env:ACST `
+          -acsi $env:ACSI `
+          -acss $env:ACSS `
+          -acsc signing-certificate.cer
 
-          mv nupkg/* .
+        mv nupkg/* .
 
-      - name: Publish signed package and certificate
-        uses: actions/upload-artifact@v4
-        with:
-          name: dotnet-tool-sign
-          path: |
-            *.nupkg
-            *.cer
+    - name: Publish signed package and certificate
+      uses: actions/upload-artifact@v4
+      with:
+        name: dotnet-tool-sign
+        path: |
+          *.nupkg
+          *.cer
 
 # ================================
 #           Validate
