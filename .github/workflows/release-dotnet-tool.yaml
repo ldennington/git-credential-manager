@@ -18,5 +18,6 @@ jobs:
         Invoke-WebRequest -Uri $asset.browser_download_url -OutFile $asset.name
 
         # Publish asset
-        dotnet nuget push $asset.name --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+        dotnet nuget add source https://int.nugettest.org/v3/index.json -n int.nugettest.org
+        dotnet nuget push $asset.name --api-key ${{ secrets.NUGET_API_KEY }} --source https://int.nugettest.org/v3/index.json
       shell: powershell
