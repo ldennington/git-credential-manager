@@ -185,11 +185,7 @@ jobs:
             -acss $env:ACSS `
             -acsc signing-certificate.cer
 
-      - name: Publish signing certificate
-        run: |
-          dotnet nuget push signing-certificate.cer `
-            --api-key ${{ secrets.NUGET_API_KEY }} `
-            --source https://api.nuget.org/v3/index.json
+          cp nupkg/* .
 
       #       exit 1
 
@@ -202,8 +198,8 @@ jobs:
         with:
           name: dotnet-tool-sign
           path: |
-            nupkg/*.nupkg
-            signing-certificate.cer
+            *.nupkg
+            *.cer
 
   # ================================
   #           Validate
@@ -235,7 +231,7 @@ jobs:
       - name: Install .NET tool
         if: contains(matrix.component.description, 'dotnet-tool')
         run: |
-          nupkgpath=$(find ./nupkg/*.nupkg)
+          nupkgpath=$(find ./*.nupkg)
           dotnet tool install -g --add-source $(dirname "$nupkgpath") git-credential-manager
           "${{ matrix.component.command }}" configure
 
@@ -314,6 +310,5 @@ jobs:
 
             await Promise.all([
               // Upload .NET tool package
-              uploadDirectoryToRelease('dotnet-tool-sign'),
-              uploadDirectoryToRelease('dotnet-tool-sign/nuget')
+              uploadDirectoryToRelease('dotnet-tool-sign')
             ]);
